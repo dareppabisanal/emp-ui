@@ -1,13 +1,20 @@
 import './NavBar.css'
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
-    const [active, setActive] = useState("Employee");
-    const menuItems = ["Employee", "Department", "Roles", "Onboard"];
+    const [active, setActive] = useState("Employees");
+    const menuItems = ["Employees", "Departments", "Roles", "Onboard"];
+    const navigate = useNavigate();
+
+    const navigateToScreen = (item) => {
+        setActive(item);
+        navigate(`/${item.toLowerCase()}`);
+    }
 
     return (
         <nav className="navbar">
-            <div className="logo">Employee Management</div>
+            <button className="logo" onClick={() => navigateToScreen('Employees')} type="button">Employee Management</button>
             <input type="checkbox" id="menu-toggle" />
             <label htmlFor="menu-toggle" className="menu-icon">&#9776;</label>
             <ul className="nav-links">
@@ -15,7 +22,7 @@ const NavBar = () => {
                     <li key={item}>
                         <a
                             className={active === item ? "active" : ""}
-                            onClick={() => setActive(item)}
+                            onClick={() => navigateToScreen(item)}
                         >
                             {item}
                         </a>
