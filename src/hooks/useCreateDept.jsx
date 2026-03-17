@@ -5,7 +5,7 @@ export const useCreateDept = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const create = async (data, url) => {
+  const crudDept = async (data, url) => {
     try {
       setLoading(true);
       setError(null);
@@ -23,5 +23,5 @@ export const useCreateDept = () => {
     }
   };
 
-  return { create, loading, error };
+  return { crudDept, loading };
 };
