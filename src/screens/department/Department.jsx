@@ -2,15 +2,36 @@ import './Department.css';
 import { useState } from "react";
 import ModalComponent from '../../components/modal/ModalComponent';
 import { ToastContainer, toast } from "react-toastify";
+import { useCreateDept } from '../../hooks/useCreateDept.jsx';
 
 const Department = () => {
   const [show, setShow] = useState(false);
   const [department, setDepartment] = useState("");
+  const { create, loading, error } = useCreateDept();
 
-  const saveDepartment = () => {
+  const handleSaveBtnClick = async (e) => {
+    e.preventDefault();
+
     if (!department) {
       toast.error("Please enter department name to add!")
       return;
+    }
+
+    try {
+      const form = {
+        "deptName": department
+      }
+      const response = await create(form, "/api/v1/dept/add");
+
+      if( response.ok ) {
+        setShow(true);
+        setDepartment("");
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (err) {
+      console.log(err.message);
     }
   }
 
@@ -46,7 +67,7 @@ const Department = () => {
               </div>
             </div>
             <div className="modal-footer">
-              <button className="float-right flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 add-button mr-2" onClick={saveDepartment}>
+              <button className="float-right flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 add-button mr-2" onClick={handleSaveBtnClick}>
                 SAVE
               </button>
               <button className="float-right flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 add-button" onClick={() => setShow(false)}>
