@@ -1,4 +1,3 @@
-import './Employee.css';
 import { useState } from "react";
 import ModalComponent from '../../components/modal/ModalComponent';
 

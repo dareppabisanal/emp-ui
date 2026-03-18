@@ -1,4 +1,3 @@
-import './Department.css';
 import { useState, useEffect } from "react";
 import ModalComponent from '../../components/modal/ModalComponent';
 import { ToastContainer, toast } from "react-toastify";
@@ -27,7 +26,7 @@ const Department = () => {
             Update
           </Button>
 
-          <Button onClick={() => handleDelete(params.row.id)} variant="contained">
+          <Button onClick={() => handleDelete(params.row.deptId)} variant="contained">
             Delete
           </Button>
         </div>
@@ -72,6 +71,9 @@ const Department = () => {
       }
       const response = await crudDept(form, "/api/v1/dept/delete");
 
+      console.log(response);
+      console.log(selDeptId);
+
       if (response.ok) {
         setSelDeptId(null);
         fetchDepartments();
@@ -80,7 +82,7 @@ const Department = () => {
         toast.error(response.message);
       }
     } catch (err) {
-      console.log(err.message);
+      toast.error(err.message);
     }
 
   }
@@ -221,7 +223,7 @@ const Department = () => {
             <div className="modal-body">
               <div className="form-group">
                 <label htmlFor="username">Name</label>
-                <input type="text" id="username" name="username" autoComplete="off" onChange={handleChange} value={department} />
+                <input type="text" id="username" name="username" className="text-input" autoComplete="off" onChange={handleChange} value={department} />
               </div>
             </div>
             <div className="modal-footer">

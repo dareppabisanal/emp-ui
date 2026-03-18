@@ -58,7 +58,15 @@ body {
     margin-bottom: 5px;
 }
 
-.form-group input {
+.autocomplete-input {
+    display: block;
+    width: 100%;
+    padding: -8px;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
+}
+
+.form-group .text-input {
     display: block;
     width: 100%;
     padding: 8px;
@@ -67,7 +75,7 @@ body {
     border: 1px solid lightgray;
 }
 
-input:focus {
+.text-input:focus {
     border: 1px solid lightgray!important;
 }
 
