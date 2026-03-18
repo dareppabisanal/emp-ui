@@ -41,10 +41,6 @@ body {
     cursor: pointer;
 }
 
-.add-button:hover {
-    background-color: oklch(0.54 0.19 264.19);
-}
-
 .content-container {
     position: absolute;
     top: 13%;

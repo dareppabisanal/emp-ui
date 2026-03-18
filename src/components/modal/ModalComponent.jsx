@@ -1,6 +1,6 @@
 import './ModalComponent.css'
 
-function ModalComponent({ show, handleClose, children, onSave, modalWidth }) {
+function ModalComponent({ show, children, modalWidth }) {
   return (
     <div className="modal" id="modal" style={{display: show ? 'block' : 'none'}}>
       <div className="modal-content" style={{width: modalWidth}}>
