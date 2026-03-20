@@ -12,11 +12,13 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@heroicons/react": "^2.2.0",
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
     "@mui/x-data-grid": "^8.27.5",
     "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.6",
+    "heroicons": "^2.2.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1",

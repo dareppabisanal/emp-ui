@@ -6,6 +6,8 @@ import { useCreateRole } from "../../hooks/useCreateRole.jsx";
 import { Autocomplete, TextField, Button } from "@mui/material";
 import ModalComponent from '../../components/modal/ModalComponent';
 import { DataGrid } from "@mui/x-data-grid";
+import { TrashIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 const Role = () => {
   const [departments, setDepartments] = useState([]);
@@ -15,19 +17,24 @@ const Role = () => {
   const [role, setRole] = useState("");
   const [department, setDepartment] = useState(null);
   const [selRoleId, setSelRoleId] = useState(null);
+  const [showDeleteConf, setShowDeleteConf] = useState(false);
+  const [showUpdateConf, setShowUpdateConf] = useState(false);
+  const [inputValue, setInputValue] = useState("");
   const columns = [
     { field: "srNum", headerName: "Sr. No.", width: 130, headerAlign: "center", headerClassName: "custom-header", align: "center" },
     { field: "deptName", headerName: "Department", flex: 1, headerClassName: "custom-header" },
     { field: "roleName", headerName: "Role", flex: 1, headerClassName: "custom-header" },
     {
-      field: "action", headerName: "Update/Delete", width: 200, headerClassName: "custom-header", align: "center", headerAlign: "center",
+      field: "action", headerName: "Update/Delete", width: 250, headerClassName: "custom-header", align: "center", headerAlign: "center",
       renderCell: (params) => (
         <div>
           <Button onClick={() => handleUpdate(params.row)} variant="contained" sx={{ marginRight: "5px" }}>
+            <PencilIcon className="h-5 w-5 mr-2" />
             Update
           </Button>
 
-          <Button onClick={() => handleDelete(params.row.id)} variant="contained">
+          <Button onClick={() => handleDelete(params.row.roleId)} variant="contained" color="error">
+            <TrashIcon className="h-5 w-5 mr-2" />
             Delete
           </Button>
         </div>
@@ -86,6 +93,11 @@ const Role = () => {
       return;
     }
 
+    if (selRoleId) {
+      updateRole();
+      return;
+    }
+
     try {
       const form = {
         "roleName": role,
@@ -97,6 +109,81 @@ const Role = () => {
         setShow(false);
         setRole("");
         setDepartment(null);
+        setInputValue("");
+        fetchRoles();
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
+
+  const handleDelete = async (roleId) => {
+    setSelRoleId(roleId);
+    setShowDeleteConf(true);
+  };
+
+  const deleteRole = async () => {
+    setShowDeleteConf(false);
+    try {
+
+      const form = {
+        "roleId": selRoleId
+      }
+      const response = await crudRole(form, "/api/v1/role/delete");
+
+      if (response.ok) {
+        setSelRoleId(null);
+        fetchRoles();
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
+
+  const closeDeleteConfirmModal = () => {
+    setSelRoleId(null);
+    setShowDeleteConf(false);
+  }
+
+  const closeUpdateConfirmModal = () => {
+    setSelRoleId(null);
+    setRole("");
+    setShowUpdateConf(false);
+  }
+
+  const handleUpdate = (row) => {
+    console.log("Role", row);
+    setSelRoleId(row.roleId);
+    setRole(row.roleName);
+    setDepartment({
+      "deptId": row.deptId,
+      "deptName": row.deptName
+    })
+    setShowUpdateConf(true);
+  };
+
+  const updateRole = async () => {
+    setShow(false);
+
+    try {
+      const form = {
+        "deptId": department.deptId,
+        "roleName": role,
+        "roleId": selRoleId
+      }
+      console.log("Payload: ", form);
+      const response = await crudRole(form, "/api/v1/role/update");
+
+      if (response.ok) {
+        setSelRoleId(null);
+        setDepartment(null);
+        setRole("");
         fetchRoles();
         toast.success(response.message);
       } else {
@@ -120,6 +207,53 @@ const Role = () => {
             <span className="text-lg font-bold">+</span>
             Add Role
           </button>
+
+          <ModalComponent
+            show={showDeleteConf}
+            modalWidth="50%"
+          >
+            <div className="modal-header">
+              <span className="close" onClick={() => setShowDeleteConf(false)}>&times;</span>
+              <h2>Delete Confirmation</h2>
+            </div>
+            <div className="modal-body">
+              <h2>Are you sure you want to delete this role? This action cannot be undone.</h2>
+            </div>
+            <div className="modal-footer">
+              <button className="float-right flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded add-button mr-2" onClick={deleteRole} disabled={loading}>
+                <CheckIcon className="h-5 w-5 mr-1" />
+                YES
+              </button>
+              <button className="float-right flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded add-button" onClick={closeDeleteConfirmModal}>
+                <XMarkIcon className="h-5 w-5 mr-1" />
+                NO
+              </button>
+            </div>
+          </ModalComponent>
+
+          <ModalComponent
+            show={showUpdateConf}
+            modalWidth="50%"
+          >
+            <div className="modal-header">
+              <span className="close" onClick={closeUpdateConfirmModal}>&times;</span>
+              <h2>Update Confirmation</h2>
+            </div>
+            <div className="modal-body">
+              <h2>Are you sure you want to update this department? This action cannot be undone.</h2>
+            </div>
+            <div className="modal-footer">
+              <button className="float-right flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded add-button mr-2" onClick={() => { setShowUpdateConf(false); setShow(true); }} disabled={loading}>
+                <CheckIcon className="h-5 w-5 mr-1" />
+                YES
+              </button>
+              <button className="float-right flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded add-button" onClick={closeUpdateConfirmModal}>
+                <XMarkIcon className="h-5 w-5 mr-1" />
+                NO
+              </button>
+            </div>
+          </ModalComponent>
+
           <ModalComponent
             show={show}
             modalWidth="35%"
@@ -137,7 +271,9 @@ const Role = () => {
                   options={departments}
                   getOptionLabel={(option) => option.deptName || ""}
                   value={department}
+                  inputValue={inputValue}
                   onChange={(event, newValue) => setDepartment(newValue)}
+                  onInputChange={(e, newInputValue) => setInputValue(newInputValue)}
                   renderInput={(params) => (
                     <TextField {...params} label="" className="w-full" />
                   )}

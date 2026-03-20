@@ -6,6 +6,8 @@ import { DataGrid } from "@mui/x-data-grid";
 import api from "../../api/api.jsx";
 import { Button } from "@mui/material";
 import Loader from "../../components/loader/Loader.jsx"
+import { TrashIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 const Department = () => {
   const [show, setShow] = useState(false);
@@ -19,14 +21,16 @@ const Department = () => {
     { field: "srNum", headerName: "Sr. No.", width: 130, headerAlign: "center", headerClassName: "custom-header", align: "center" },
     { field: "deptName", headerName: "Name", flex: 1, headerClassName: "custom-header" },
     {
-      field: "action", headerName: "Update/Delete", width: 200, headerClassName: "custom-header", align: "center", headerAlign: "center",
+      field: "action", headerName: "Update/Delete", width: 250, headerClassName: "custom-header", align: "center", headerAlign: "center",
       renderCell: (params) => (
         <div>
           <Button onClick={() => handleUpdate(params.row)} variant="contained" sx={{ marginRight: "5px" }}>
+            <PencilIcon className="h-5 w-5 mr-2" />
             Update
           </Button>
 
-          <Button onClick={() => handleDelete(params.row.deptId)} variant="contained">
+          <Button onClick={() => handleDelete(params.row.deptId)} variant="contained" color="error">
+            <TrashIcon className="h-5 w-5 mr-2" />
             Delete
           </Button>
         </div>
@@ -36,7 +40,7 @@ const Department = () => {
 
   const handleUpdate = (row) => {
     setSelDeptId(row.deptId);
-    setDepartment(row.deptName)
+    setDepartment(row.deptName);
     setShowUpdateConf(true);
   };
 
@@ -59,7 +63,7 @@ const Department = () => {
         toast.error(response.message);
       }
     } catch (err) {
-      console.log(err.message);
+      toast.error(err.message);
     }
   }
 
@@ -70,9 +74,6 @@ const Department = () => {
         "deptId": selDeptId
       }
       const response = await crudDept(form, "/api/v1/dept/delete");
-
-      console.log(response);
-      console.log(selDeptId);
 
       if (response.ok) {
         setSelDeptId(null);
@@ -183,9 +184,11 @@ const Department = () => {
             </div>
             <div className="modal-footer">
               <button className="float-right flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded add-button mr-2" onClick={deleteDepartment} disabled={loading}>
+                <CheckIcon className="h-5 w-5 mr-1" />
                 YES
               </button>
               <button className="float-right flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded add-button" onClick={closeDeleteConfirmModal}>
+                <XMarkIcon className="h-5 w-5 mr-1" />
                 NO
               </button>
             </div>
@@ -204,9 +207,11 @@ const Department = () => {
             </div>
             <div className="modal-footer">
               <button className="float-right flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded add-button mr-2" onClick={() => { setShowUpdateConf(false); setShow(true); }} disabled={loading}>
+                <CheckIcon className="h-5 w-5 mr-1" />
                 YES
               </button>
               <button className="float-right flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded add-button" onClick={closeUpdateConfirmModal}>
+                <XMarkIcon className="h-5 w-5 mr-1" />
                 NO
               </button>
             </div>
